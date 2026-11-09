@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A Little Flower for Farel</title>
+<title>buat kamu rama :) </title>
 <style>
   html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
   /* ภาพเต็มหน้าต่างเบราว์เซอร์ (ขยายให้ใหญ่ที่สุดโดยไม่ตัดดอกไม้ ส่วนที่เหลือเป็นสีดำ) */
   canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block;
     object-fit: contain; background: #000; }
 
-  /* Tipografi ucapan: elegan, lembut, dan tidak mengganggu animasi bunga. */
+  /* Ucapan ulang tahun untuk penerima bunga */
   .birthday-message {
     position: fixed;
     z-index: 2;
@@ -23,106 +23,62 @@
     pointer-events: none;
     padding: 12px 18px 16px;
     text-shadow: 0 2px 18px rgba(0, 0, 0, .95), 0 0 28px rgba(221, 176, 119, .22);
+    animation: messageAppear 2.2s ease both;
   }
   .birthday-message .eyebrow {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
     color: #d8b987;
-    font: 600 10px/1.5 Arial, sans-serif;
-    letter-spacing: .36em;
+    font: 600 10px/1.4 Arial, sans-serif;
+    letter-spacing: .34em;
     text-transform: uppercase;
-    opacity: 0;
-    animation: textFadeUp 1s .15s ease-out forwards;
   }
   .birthday-message h1 {
     margin: 0;
     font: 400 clamp(25px, 4.5vw, 43px)/1.15 Georgia, "Times New Roman", serif;
-    letter-spacing: .035em;
-    text-wrap: balance;
-    opacity: 0;
-    animation: nameReveal 1.35s .4s cubic-bezier(.2,.7,.2,1) forwards;
+    letter-spacing: .025em;
   }
   .birthday-message .wish {
-    margin: 11px 0 0;
+    margin: 9px 0 0;
     color: #f1dfc8;
-    font: italic clamp(13px, 2vw, 17px)/1.55 Georgia, "Times New Roman", serif;
+    font: italic clamp(13px, 2vw, 17px)/1.5 Georgia, "Times New Roman", serif;
     letter-spacing: .025em;
-    opacity: 0;
-    animation: textFadeUp 1s 1s ease-out forwards;
+  }
+  @keyframes messageAppear {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+  @media (max-width: 520px) {
+    .birthday-message { top: 14px; padding-inline: 10px; }
+    .birthday-message .eyebrow { letter-spacing: .22em; font-size: 9px; }
+  }
+
+  .birthday-message .signature {
+    margin: 8px 0 0;
+    color: #d9d2cc;
+    font: italic clamp(12px, 1.8vw, 15px)/1.5 Georgia, "Times New Roman", serif;
+    letter-spacing: .015em;
   }
   .birthday-message .signature {
-    margin: 17px 0 0;
+    margin: 18px 0 0;
     color: #d9d2cc;
     font: italic clamp(12px, 1.8vw, 15px)/1.6 Georgia, "Times New Roman", serif;
-    letter-spacing: .02em;
-    opacity: 0;
-    animation: textFadeUp 1s 1.35s ease-out forwards;
+    letter-spacing: .015em;
   }
   .birthday-message .prayer {
     color: #eee8e2;
     font-size: .92em;
   }
   .birthday-message .white-heart {
-    display: inline-block;
     color: #fff;
     font: 13px/1 Arial, sans-serif;
     vertical-align: 1px;
     margin-left: 3px;
-    animation: heartShimmer 4s 2.5s ease-in-out infinite;
   }
-  @keyframes textFadeUp {
-    from { opacity: 0; transform: translateY(9px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes nameReveal {
-    0% { opacity: 0; transform: translateY(12px); letter-spacing: .09em; filter: blur(3px); }
-    70% { opacity: 1; filter: blur(0); }
-    100% { opacity: 1; transform: translateY(0); letter-spacing: .035em; filter: blur(0); }
-  }
-  @keyframes heartShimmer {
-    0%, 100% { opacity: .75; text-shadow: 0 0 0 rgba(255,255,255,0); }
-    50% { opacity: 1; text-shadow: 0 0 9px rgba(255,255,255,.55); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .birthday-message .eyebrow,
-    .birthday-message h1,
-    .birthday-message .wish,
-    .birthday-message .signature,
-    .birthday-message .white-heart {
-      animation: none;
-      opacity: 1;
-      filter: none;
-      transform: none;
-    }
-  }
-
-  /* Tombol musik kecil; pemutar SoundCloud disembunyikan dari tampilan. */
-  .music-toggle {
-    position: fixed; z-index: 20; right: 16px; bottom: 16px;
-    width: 38px; height: 38px; display: grid; place-items: center;
-    padding: 0; border: 1px solid rgba(217,185,135,.75); border-radius: 50%;
-    background: rgba(20,16,16,.82); color: #f8ead5;
-    font: 20px Georgia,serif; box-shadow: 0 2px 10px rgba(0,0,0,.3);
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
-  }
-  .music-toggle.is-playing { color: #f2c98f; box-shadow: 0 0 12px rgba(217,185,135,.4); }
-  .music-frame {
-    position: fixed; width: 1px; height: 1px; right: 0; bottom: 0;
-    opacity: .01; pointer-events: none; border: 0;
-  }
-
-  @media (max-width: 600px) {
-    html, body { overflow: hidden; }
-    canvas { width: 100vw; height: 100vh; height: 100dvh; }
-    .birthday-message {
-      top: max(14px, env(safe-area-inset-top));
-      width: calc(100vw - 28px);
-      padding: 8px 8px 10px;
-    }
-    .birthday-message .eyebrow { font-size: 9px; letter-spacing: .25em; margin-bottom: 7px; }
-    .birthday-message h1 { font-size: clamp(21px, 6vw, 30px); line-height: 1.12; }
-    .birthday-message .wish { font-size: 13px; margin-top: 8px; line-height: 1.4; }
-    .birthday-message .signature { font-size: 11px; margin-top: 10px; line-height: 1.4; }
-    .music-toggle { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); width: 36px; height: 36px; }
+  @media (max-width: 520px) {
+    html, body { min-height: 100%; }
+    canvas { width: 100vw; height: 100dvh; }
+    .birthday-message { top: max(12px, env(safe-area-inset-top)); width: 94vw; }
+    .birthday-message h1 { font-size: clamp(23px, 7vw, 34px); overflow-wrap: anywhere; }
   }
 </style>
 </head>
@@ -132,27 +88,24 @@
   <p class="eyebrow">A Little Flower for u</p>
   <h1>Farel Ramandha Frisco</h1>
   <p class="wish">Selamat ulang tahun yaa, semoga kamu selalu bahagia.</p>
-  <p class="signature">愛を込めて - syaa <br><span class="prayer">"i always pray for u"</span> <span class="white-heart" aria-label="white heart">♡</span></p>
+  <p class="signature">愛を込めて - syaa<br><span class="prayer">"i always pray for u"</span> <span class="white-heart" aria-label="white heart">♡</span></p>
 </div>
 
 
 <script>
 "use strict";
 // ================================================================ ตั้งค่า
-const FONT_SIZE = 10;
-const IS_MOBILE = matchMedia("(max-width: 600px)").matches;
-const FPS = IS_MOBILE ? 18 : 30;
+const FONT_SIZE = 10, FPS = 30;
 const FONT = `${FONT_SIZE}px Menlo, Consolas, "DejaVu Sans Mono", "Courier New", monospace`;
 const probe = document.createElement("canvas").getContext("2d");
 probe.font = FONT;
 const CW = Math.max(1, Math.round(probe.measureText("M").width)), CH = Math.round(FONT_SIZE * 1.15);
 // ตารางตัวอักษร: สูง 160 แถวเสมอ ส่วนความกว้างปรับตามสัดส่วนหน้าต่าง -> ภาพเต็มเบราว์เซอร์พอดี
-const ROWS = IS_MOBILE ? 104 : 160;
-const COLS = Math.max(IS_MOBILE ? 90 : 150, Math.min(IS_MOBILE ? 360 : 640,
-  Math.round(ROWS * CH / CW * innerWidth / Math.max(1, innerHeight))));
+const ROWS = 160;
+const COLS = Math.max(150, Math.min(640, Math.round(ROWS * CH / CW * innerWidth / Math.max(1, innerHeight))));
 const N = COLS * ROWS;
 const WAVE_PERIOD = 14, BREATH = 7, BREATH_DEPTH = 0.18;
-const settings = { wind: 3, size: 1.8, glow: IS_MOBILE ? 0.25 : 0.6 };   // แรงลม, ขนาดดอก, แสงฟุ้ง
+const settings = { wind: 3, size: 1.8, glow: 0.6 };   // แรงลม, ขนาดดอก, แสงฟุ้ง
 
 const BUCKETS = [" ", ".'`", ":;,-~", "!/\\|()[]{}<>?+=", "tfjrxnuvczil", "XYUJCLQ0OZmwqpdbkhao", "#MW&8%B", "@$"];
 const LEVELS = [0.06, 0.15, 0.30, 0.45, 0.60, 0.75, 0.90];
@@ -547,7 +500,6 @@ function draw(frame, t) {
 // ================================================================ เล่น
 let t0 = performance.now(), lastDraw = -1e9;
 function tick(now) {
-  if (animationPaused) return;
   if (now - lastDraw >= 1000 / FPS - 2) {
     lastDraw = now;
     const t = (now - t0) / 1000;
@@ -566,42 +518,6 @@ addEventListener("resize", () => {
     const want = Math.max(150, Math.min(640, Math.round(ROWS * CH / CW * innerWidth / Math.max(1, innerHeight))));
     if (Math.abs(want - COLS) > 4) location.reload();
   }, 400);
-});
-
-// Musik SoundCloud: mulai saat ikon kecil disentuh.
-// Browser HP dapat membatasi autoplay dari iframe; interaksi pengguna membantu mengizinkannya.
-const musicToggle = document.createElement("button");
-musicToggle.type = "button";
-musicToggle.className = "music-toggle";
-musicToggle.textContent = "♫";
-musicToggle.setAttribute("aria-label", "Putar musik latar");
-musicToggle.setAttribute("title", "Putar musik");
-
-const musicFrame = document.createElement("iframe");
-musicFrame.className = "music-frame";
-musicFrame.title = "Musik latar";
-musicFrame.allow = "autoplay; encrypted-media";
-musicFrame.scrolling = "no";
-musicFrame.setAttribute("frameborder", "0");
-document.body.appendChild(musicFrame);
-document.body.appendChild(musicToggle);
-
-let musicStarted = false;
-musicToggle.addEventListener("click", () => {
-  if (!musicStarted) {
-    musicFrame.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A560772978&color=%23ff5500&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false";
-    musicStarted = true;
-    musicToggle.classList.add("is-playing");
-    musicToggle.setAttribute("aria-label", "Musik sedang diputar");
-    musicToggle.setAttribute("title", "Musik sedang diputar");
-  }
-});
-
-// Hemat baterai dan CPU saat tab tidak terlihat.
-let animationPaused = false;
-document.addEventListener("visibilitychange", () => {
-  animationPaused = document.hidden;
-  if (!animationPaused) requestAnimationFrame(tick);
 });
 
 
