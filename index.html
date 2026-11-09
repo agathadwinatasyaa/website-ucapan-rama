@@ -4,13 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A Little Flower for Farel</title>
+.soundcloud-container {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 300px;
+    height: 166px;
+    z-index: 99999;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #171313;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, .5);
+}
+
+.soundcloud-container iframe {
+    display: block;
+    width: 100%;
+    height: 166px;
+    border: 0;
+}
 <style>
   html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
   /* ภาพเต็มหน้าต่างเบราว์เซอร์ (ขยายให้ใหญ่ที่สุดโดยไม่ตัดดอกไม้ ส่วนที่เหลือเป็นสีดำ) */
   canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block;
     object-fit: contain; background: #000; }
 
-  /* Ucapan ulang tahun untuk penerima bunga */
+  /* Tipografi ucapan: elegan, lembut, dan tidak mengganggu animasi bunga. */
   .birthday-message {
     position: fixed;
     z-index: 2;
@@ -23,62 +42,76 @@
     pointer-events: none;
     padding: 12px 18px 16px;
     text-shadow: 0 2px 18px rgba(0, 0, 0, .95), 0 0 28px rgba(221, 176, 119, .22);
-    animation: messageAppear 2.2s ease both;
   }
   .birthday-message .eyebrow {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: #d8b987;
-    font: 600 10px/1.4 Arial, sans-serif;
-    letter-spacing: .34em;
+    font: 600 10px/1.5 Arial, sans-serif;
+    letter-spacing: .36em;
     text-transform: uppercase;
+    opacity: 0;
+    animation: textFadeUp 1s .15s ease-out forwards;
   }
   .birthday-message h1 {
     margin: 0;
     font: 400 clamp(25px, 4.5vw, 43px)/1.15 Georgia, "Times New Roman", serif;
-    letter-spacing: .025em;
+    letter-spacing: .035em;
+    text-wrap: balance;
+    opacity: 0;
+    animation: nameReveal 1.35s .4s cubic-bezier(.2,.7,.2,1) forwards;
   }
   .birthday-message .wish {
-    margin: 9px 0 0;
+    margin: 11px 0 0;
     color: #f1dfc8;
-    font: italic clamp(13px, 2vw, 17px)/1.5 Georgia, "Times New Roman", serif;
+    font: italic clamp(13px, 2vw, 17px)/1.55 Georgia, "Times New Roman", serif;
     letter-spacing: .025em;
-  }
-  @keyframes messageAppear {
-    from { opacity: 0; transform: translate(-50%, -10px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-  }
-  @media (max-width: 520px) {
-    .birthday-message { top: 14px; padding-inline: 10px; }
-    .birthday-message .eyebrow { letter-spacing: .22em; font-size: 9px; }
-  }
-
-  .birthday-message .signature {
-    margin: 8px 0 0;
-    color: #d9d2cc;
-    font: italic clamp(12px, 1.8vw, 15px)/1.5 Georgia, "Times New Roman", serif;
-    letter-spacing: .015em;
+    opacity: 0;
+    animation: textFadeUp 1s 1s ease-out forwards;
   }
   .birthday-message .signature {
-    margin: 18px 0 0;
+    margin: 17px 0 0;
     color: #d9d2cc;
     font: italic clamp(12px, 1.8vw, 15px)/1.6 Georgia, "Times New Roman", serif;
-    letter-spacing: .015em;
+    letter-spacing: .02em;
+    opacity: 0;
+    animation: textFadeUp 1s 1.35s ease-out forwards;
   }
   .birthday-message .prayer {
     color: #eee8e2;
     font-size: .92em;
   }
   .birthday-message .white-heart {
+    display: inline-block;
     color: #fff;
     font: 13px/1 Arial, sans-serif;
     vertical-align: 1px;
     margin-left: 3px;
+    animation: heartShimmer 4s 2.5s ease-in-out infinite;
   }
-  @media (max-width: 520px) {
-    html, body { min-height: 100%; }
-    canvas { width: 100vw; height: 100dvh; }
-    .birthday-message { top: max(12px, env(safe-area-inset-top)); width: 94vw; }
-    .birthday-message h1 { font-size: clamp(23px, 7vw, 34px); overflow-wrap: anywhere; }
+  @keyframes textFadeUp {
+    from { opacity: 0; transform: translateY(9px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes nameReveal {
+    0% { opacity: 0; transform: translateY(12px); letter-spacing: .09em; filter: blur(3px); }
+    70% { opacity: 1; filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0); letter-spacing: .035em; filter: blur(0); }
+  }
+  @keyframes heartShimmer {
+    0%, 100% { opacity: .75; text-shadow: 0 0 0 rgba(255,255,255,0); }
+    50% { opacity: 1; text-shadow: 0 0 9px rgba(255,255,255,.55); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .birthday-message .eyebrow,
+    .birthday-message h1,
+    .birthday-message .wish,
+    .birthday-message .signature,
+    .birthday-message .white-heart {
+      animation: none;
+      opacity: 1;
+      filter: none;
+      transform: none;
+    }
   }
 </style>
 </head>
@@ -87,8 +120,8 @@
 <div class="birthday-message" aria-label="Ucapan ulang tahun">
   <p class="eyebrow">A Little Flower for You</p>
   <h1>Farel Ramandha Frisco</h1>
-  <p class="wish">Selamat ulang tahun yaa,Semoga kamu selalu bahagia.</p>
-  <p class="signature">Fait Avee Amour - Natasya<br><span class="prayer">"i always pray for u"</span> <span class="white-heart" aria-label="white heart">♡</span></p>
+  <p class="wish">Selamat ulang tahun yaa, semoga kamu selalu bahagia.</p>
+  <p class="signature">Fait Avec Amour - natasya<br><span class="prayer">"i always pray for u"</span> <span class="white-heart" aria-label="white heart">♡</span></p>
 </div>
 
 
@@ -520,17 +553,50 @@ addEventListener("resize", () => {
   }, 400);
 });
 
-// Musik latar dari Audio.com.
- // Audio.com menyediakan halaman pemutar, bukan URL berkas audio langsung.
- // Autoplay dapat dibatasi oleh browser; jika diblokir, buka tautan lagu di bawah.
- const audioFrame = document.createElement("iframe");
- audioFrame.src = "https://audio.com/gyongyi-horvath/audio/james-arthur-you-re-still-the-one-shania-twain-cover?autoplay=1";
- audioFrame.title = "Musik latar";
- audioFrame.allow = "autoplay; encrypted-media";
- audioFrame.setAttribute("aria-hidden", "true");
- audioFrame.tabIndex = -1;
- audioFrame.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;bottom:-10px;border:0;";
- document.body.appendChild(audioFrame);
+// Musik latar SoundCloud: Pamungkas - I Love You But I'm Letting Go.
+// Autoplay dicoba saat halaman dibuka. Browser/HP dapat tetap meminta interaksi pengguna.
+const soundcloudFrame = document.createElement("iframe");
+soundcloudFrame.id = "soundcloud-background-player";
+soundcloudFrame.title = "Musik latar SoundCloud";
+soundcloudFrame.allow = "autoplay; encrypted-media";
+soundcloudFrame.setAttribute("aria-hidden", "true");
+soundcloudFrame.tabIndex = -1;
+soundcloudFrame.style.cssText = "position:fixed;width:300px;height:166px;left:-10000px;bottom:0;opacity:0;pointer-events:none;border:0;";
+soundcloudFrame.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A560772978&color=%23ff5500&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false";
+document.body.appendChild(soundcloudFrame);
+
+// Tombol cadangan hanya muncul jika autoplay dibatasi browser.
+const musicFallback = document.createElement("button");
+musicFallback.type = "button";
+musicFallback.textContent = "♫ Putar musik";
+musicFallback.setAttribute("aria-label", "Putar musik latar");
+musicFallback.style.cssText = "position:fixed;right:20px;bottom:20px;z-index:10;display:none;padding:11px 17px;border:1px solid rgba(217,185,135,.65);border-radius:30px;background:rgba(15,12,12,.88);color:#f8ead5;font:13px Georgia,serif;letter-spacing:.04em;cursor:pointer;box-shadow:0 4px 22px rgba(0,0,0,.45);";
+document.body.appendChild(musicFallback);
+
+const soundcloudApi = document.createElement("script");
+soundcloudApi.src = "https://w.soundcloud.com/player/api.js";
+soundcloudApi.async = true;
+soundcloudApi.onload = () => {
+  if (!window.SC || !window.SC.Widget) return;
+  const player = window.SC.Widget(soundcloudFrame);
+  let musicStarted = false;
+  player.bind(window.SC.Widget.Events.PLAY, () => {
+    musicStarted = true;
+    musicFallback.style.display = "none";
+  });
+  player.bind(window.SC.Widget.Events.READY, () => {
+    player.play();
+    // Jika autoplay tidak diizinkan, tampilkan tombol untuk memulai musik dengan satu klik.
+    setTimeout(() => {
+      if (!musicStarted) musicFallback.style.display = "block";
+    }, 3500);
+  });
+  musicFallback.addEventListener("click", () => {
+    player.play();
+    musicFallback.textContent = "♫ Memutar musik";
+  });
+};
+document.head.appendChild(soundcloudApi);
 
 </script>
 </body>
