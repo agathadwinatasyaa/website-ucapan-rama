@@ -4,25 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A Little Flower for Farel</title>
-.soundcloud-container {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    width: 300px;
-    height: 166px;
-    z-index: 99999;
-    overflow: hidden;
-    border-radius: 12px;
-    background: #171313;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, .5);
-}
-
-.soundcloud-container iframe {
-    display: block;
-    width: 100%;
-    height: 166px;
-    border: 0;
-}
 <style>
   html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
   /* ภาพเต็มหน้าต่างเบราว์เซอร์ (ขยายให้ใหญ่ที่สุดโดยไม่ตัดดอกไม้ ส่วนที่เหลือเป็นสีดำ) */
@@ -113,32 +94,65 @@
       transform: none;
     }
   }
+
+  /* Tombol musik kecil; pemutar SoundCloud disembunyikan dari tampilan. */
+  .music-toggle {
+    position: fixed; z-index: 20; right: 16px; bottom: 16px;
+    width: 38px; height: 38px; display: grid; place-items: center;
+    padding: 0; border: 1px solid rgba(217,185,135,.75); border-radius: 50%;
+    background: rgba(20,16,16,.82); color: #f8ead5;
+    font: 20px Georgia,serif; box-shadow: 0 2px 10px rgba(0,0,0,.3);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .music-toggle.is-playing { color: #f2c98f; box-shadow: 0 0 12px rgba(217,185,135,.4); }
+  .music-frame {
+    position: fixed; width: 1px; height: 1px; right: 0; bottom: 0;
+    opacity: .01; pointer-events: none; border: 0;
+  }
+
+  @media (max-width: 600px) {
+    html, body { overflow: hidden; }
+    canvas { width: 100vw; height: 100vh; height: 100dvh; }
+    .birthday-message {
+      top: max(14px, env(safe-area-inset-top));
+      width: calc(100vw - 28px);
+      padding: 8px 8px 10px;
+    }
+    .birthday-message .eyebrow { font-size: 9px; letter-spacing: .25em; margin-bottom: 7px; }
+    .birthday-message h1 { font-size: clamp(21px, 6vw, 30px); line-height: 1.12; }
+    .birthday-message .wish { font-size: 13px; margin-top: 8px; line-height: 1.4; }
+    .birthday-message .signature { font-size: 11px; margin-top: 10px; line-height: 1.4; }
+    .music-toggle { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); width: 36px; height: 36px; }
+  }
 </style>
 </head>
 <body>
 <canvas id="view" aria-label="ช่อ bunga yang digambar dengan karakter"></canvas>
 <div class="birthday-message" aria-label="Ucapan ulang tahun">
-  <p class="eyebrow">A Little Flower for You</p>
+  <p class="eyebrow">A Little Flower for u</p>
   <h1>Farel Ramandha Frisco</h1>
   <p class="wish">Selamat ulang tahun yaa, semoga kamu selalu bahagia.</p>
-  <p class="signature">Fait Avec Amour - natasya<br><span class="prayer">"i always pray for u"</span> <span class="white-heart" aria-label="white heart">♡</span></p>
+  <p class="signature">愛を込めて - syaa <br><span class="prayer">"i always pray for u"</span> <span class="white-heart" aria-label="white heart">♡</span></p>
 </div>
 
 
 <script>
 "use strict";
 // ================================================================ ตั้งค่า
-const FONT_SIZE = 10, FPS = 30;
+const FONT_SIZE = 10;
+const IS_MOBILE = matchMedia("(max-width: 600px)").matches;
+const FPS = IS_MOBILE ? 18 : 30;
 const FONT = `${FONT_SIZE}px Menlo, Consolas, "DejaVu Sans Mono", "Courier New", monospace`;
 const probe = document.createElement("canvas").getContext("2d");
 probe.font = FONT;
 const CW = Math.max(1, Math.round(probe.measureText("M").width)), CH = Math.round(FONT_SIZE * 1.15);
 // ตารางตัวอักษร: สูง 160 แถวเสมอ ส่วนความกว้างปรับตามสัดส่วนหน้าต่าง -> ภาพเต็มเบราว์เซอร์พอดี
-const ROWS = 160;
-const COLS = Math.max(150, Math.min(640, Math.round(ROWS * CH / CW * innerWidth / Math.max(1, innerHeight))));
+const ROWS = IS_MOBILE ? 104 : 160;
+const COLS = Math.max(IS_MOBILE ? 90 : 150, Math.min(IS_MOBILE ? 360 : 640,
+  Math.round(ROWS * CH / CW * innerWidth / Math.max(1, innerHeight))));
 const N = COLS * ROWS;
 const WAVE_PERIOD = 14, BREATH = 7, BREATH_DEPTH = 0.18;
-const settings = { wind: 3, size: 1.8, glow: 0.6 };   // แรงลม, ขนาดดอก, แสงฟุ้ง
+const settings = { wind: 3, size: 1.8, glow: IS_MOBILE ? 0.25 : 0.6 };   // แรงลม, ขนาดดอก, แสงฟุ้ง
 
 const BUCKETS = [" ", ".'`", ":;,-~", "!/\\|()[]{}<>?+=", "tfjrxnuvczil", "XYUJCLQ0OZmwqpdbkhao", "#MW&8%B", "@$"];
 const LEVELS = [0.06, 0.15, 0.30, 0.45, 0.60, 0.75, 0.90];
@@ -533,6 +547,7 @@ function draw(frame, t) {
 // ================================================================ เล่น
 let t0 = performance.now(), lastDraw = -1e9;
 function tick(now) {
+  if (animationPaused) return;
   if (now - lastDraw >= 1000 / FPS - 2) {
     lastDraw = now;
     const t = (now - t0) / 1000;
@@ -553,50 +568,42 @@ addEventListener("resize", () => {
   }, 400);
 });
 
-// Musik latar SoundCloud: Pamungkas - I Love You But I'm Letting Go.
-// Autoplay dicoba saat halaman dibuka. Browser/HP dapat tetap meminta interaksi pengguna.
-const soundcloudFrame = document.createElement("iframe");
-soundcloudFrame.id = "soundcloud-background-player";
-soundcloudFrame.title = "Musik latar SoundCloud";
-soundcloudFrame.allow = "autoplay; encrypted-media";
-soundcloudFrame.setAttribute("aria-hidden", "true");
-soundcloudFrame.tabIndex = -1;
-soundcloudFrame.style.cssText = "position:fixed;width:300px;height:166px;left:-10000px;bottom:0;opacity:0;pointer-events:none;border:0;";
-soundcloudFrame.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A560772978&color=%23ff5500&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false";
-document.body.appendChild(soundcloudFrame);
+// Musik SoundCloud: mulai saat ikon kecil disentuh.
+// Browser HP dapat membatasi autoplay dari iframe; interaksi pengguna membantu mengizinkannya.
+const musicToggle = document.createElement("button");
+musicToggle.type = "button";
+musicToggle.className = "music-toggle";
+musicToggle.textContent = "♫";
+musicToggle.setAttribute("aria-label", "Putar musik latar");
+musicToggle.setAttribute("title", "Putar musik");
 
-// Tombol cadangan hanya muncul jika autoplay dibatasi browser.
-const musicFallback = document.createElement("button");
-musicFallback.type = "button";
-musicFallback.textContent = "♫ Putar musik";
-musicFallback.setAttribute("aria-label", "Putar musik latar");
-musicFallback.style.cssText = "position:fixed;right:20px;bottom:20px;z-index:10;display:none;padding:11px 17px;border:1px solid rgba(217,185,135,.65);border-radius:30px;background:rgba(15,12,12,.88);color:#f8ead5;font:13px Georgia,serif;letter-spacing:.04em;cursor:pointer;box-shadow:0 4px 22px rgba(0,0,0,.45);";
-document.body.appendChild(musicFallback);
+const musicFrame = document.createElement("iframe");
+musicFrame.className = "music-frame";
+musicFrame.title = "Musik latar";
+musicFrame.allow = "autoplay; encrypted-media";
+musicFrame.scrolling = "no";
+musicFrame.setAttribute("frameborder", "0");
+document.body.appendChild(musicFrame);
+document.body.appendChild(musicToggle);
 
-const soundcloudApi = document.createElement("script");
-soundcloudApi.src = "https://w.soundcloud.com/player/api.js";
-soundcloudApi.async = true;
-soundcloudApi.onload = () => {
-  if (!window.SC || !window.SC.Widget) return;
-  const player = window.SC.Widget(soundcloudFrame);
-  let musicStarted = false;
-  player.bind(window.SC.Widget.Events.PLAY, () => {
+let musicStarted = false;
+musicToggle.addEventListener("click", () => {
+  if (!musicStarted) {
+    musicFrame.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A560772978&color=%23ff5500&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false";
     musicStarted = true;
-    musicFallback.style.display = "none";
-  });
-  player.bind(window.SC.Widget.Events.READY, () => {
-    player.play();
-    // Jika autoplay tidak diizinkan, tampilkan tombol untuk memulai musik dengan satu klik.
-    setTimeout(() => {
-      if (!musicStarted) musicFallback.style.display = "block";
-    }, 3500);
-  });
-  musicFallback.addEventListener("click", () => {
-    player.play();
-    musicFallback.textContent = "♫ Memutar musik";
-  });
-};
-document.head.appendChild(soundcloudApi);
+    musicToggle.classList.add("is-playing");
+    musicToggle.setAttribute("aria-label", "Musik sedang diputar");
+    musicToggle.setAttribute("title", "Musik sedang diputar");
+  }
+});
+
+// Hemat baterai dan CPU saat tab tidak terlihat.
+let animationPaused = false;
+document.addEventListener("visibilitychange", () => {
+  animationPaused = document.hidden;
+  if (!animationPaused) requestAnimationFrame(tick);
+});
+
 
 </script>
 </body>
